@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"mascot/src/config"
+	"mascot/src/db"
 	"mascot/src/http"
 	"mascot/src/mascot"
 	"mascot/src/mngr"
@@ -12,6 +13,7 @@ import (
 
 type App struct {
 	Config  *config.Config
+	Db      *db.Service
 	Http    *http.Service
 	Mascot  *mascot.Service
 	Context context.Context
@@ -25,11 +27,13 @@ func New(config *config.Config) (*App, error) {
 	manager := mngr.New(ctx, &wg, config)
 	http := manager.GetHttpService()
 	mascot := manager.GetMascotService()
+	db := manager.GetPostgresService()
 
 	http.AddRouter(mascot.GetMascotRouter())
 
 	app := &App{
 		Config:  config,
+		Db:      db,
 		Http:    http,
 		Mascot:  mascot,
 		Context: ctx,
@@ -40,6 +44,7 @@ func New(config *config.Config) (*App, error) {
 }
 
 func (a *App) Run() {
+	go a.Db.Run()
 	go a.Http.Run()
 }
 

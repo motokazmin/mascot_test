@@ -1,5 +1,11 @@
 {
    "http":{
       "listen":"127.0.0.1:8080"
+   },
+   "db": {
+      "user": "postgres",
+      "dbname": "mascot_test",
+      "password": "postgres",
+      "sslmode": "disable"
    }
 }

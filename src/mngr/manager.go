@@ -3,6 +3,7 @@ package mngr
 import (
 	"context"
 	"mascot/src/config"
+	"mascot/src/db"
 	"mascot/src/http"
 	"mascot/src/mascot"
 	"sync"
@@ -13,6 +14,7 @@ type Manager struct {
 	conf   *config.Config
 	ctx    context.Context
 	wg     *sync.WaitGroup
+	db     *db.Service
 	http   *http.Service
 	mascot *mascot.Service
 }
@@ -20,6 +22,7 @@ type Manager struct {
 func New(ctx context.Context, wg *sync.WaitGroup, conf *config.Config) *Manager {
 	return &Manager{
 		once: map[string]*sync.Once{
+			"db":     {},
 			"http":   {},
 			"mascot": {},
 		},
@@ -41,4 +44,11 @@ func (m *Manager) GetMascotService() *mascot.Service {
 		m.mascot = mascot.New(m.ctx, m.wg, m.conf)
 	})
 	return m.mascot
+}
+
+func (m *Manager) GetPostgresService() *db.Service {
+	m.once["db"].Do(func() {
+		m.db = db.New(m.ctx, m.wg, m.conf)
+	})
+	return m.db
 }
