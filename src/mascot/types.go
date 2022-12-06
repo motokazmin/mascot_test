@@ -4,57 +4,57 @@ type GetBalanceBody struct {
 	Version          string `json:"jsonrpc"`
 	Method           string `json:"method"`
 	GetBalanceParams `json:"params"`
-	Id               int `json:id`
+	Id               int `json:"id"`
 }
 
 type WithdrawAndDepositBody struct {
 	Version                  string `json:"jsonrpc"`
 	Method                   string `json:"method"`
 	WithdrawAndDepositParams `json:"params"`
-	Id                       int `json:id`
+	Id                       int `json:"id"`
 }
 
 type RollbackTransactionBody struct {
 	Version                   string `json:"jsonrpc"`
 	Method                    string `json:"method"`
 	RollbackTransactionParams `json:"params"`
-	Id                        int `json:id`
+	Id                        int `json:"id"`
 }
 
 // Params
 type GetBalanceParams struct {
-	CallerId   int    `json:callerId`
-	PlayerName string `json:playerName`
-	Currency   string `json:currency`
-	GameId     string `json:gameId`
+	CallerId   int     `json:"callerId"`
+	PlayerName string  `json:"playerName"`
+	Currency   string  `json:"currency"`
+	GameId     *string `json:"gameId"`
 }
 
 type WithdrawAndDepositParams struct {
-	CallerId       int         `json:callerId`
-	PlayerName     string      `json:playerName`
-	Withdraw       int         `json:withdraw`
-	Deposit        int         `json:deposit`
-	Currency       string      `json:currency`
-	TransactionRef string      `json:transactionRef`
-	GameRoundRef   string      `json:gameRoundRef`
-	GameId         string      `json:gameId`
-	Reason         string      `json:reason`
-	SessionId      string      `json:sessionId`
-	SpinDetails    SpinDetails `json:spinDetails`
+	CallerId       int          `json:"callerId"`
+	PlayerName     string       `json:"playerName"`
+	Withdraw       int          `json:"withdraw"`
+	Deposit        int          `json:"deposit"`
+	Currency       string       `json:"currency"`
+	TransactionRef string       `json:"transactionRef"`
+	GameRoundRef   *string      `json:"gameRoundRef"`
+	GameId         *string      `json:"gameId"`
+	Reason         *string      `json:"reason"`
+	SessionId      *string      `json:"sessionId"`
+	SpinDetails    *SpinDetails `json:"spinDetails"`
 }
 
 type SpinDetails struct {
-	BetType string `json:betType`
-	WinType string `json:winType`
+	BetType string `json:"betType"`
+	WinType string `json:"winType"`
 }
 
 type RollbackTransactionParams struct {
-	CallerId       int    `json:callerId`
-	PlayerName     string `json:playerName`
-	TransactionRef string `json:transactionRef`
-	GameId         string `json:gameId`
-	SessionId      string `json:sessionId`
-	GameRoundRef   string `json:gameRoundRef`
+	CallerId       int     `json:"callerId"`
+	PlayerName     string  `json:"playerName"`
+	TransactionRef string  `json:"transactionRef"`
+	GameId         *string `json:"gameId"`
+	SessionId      *string `json:"sessionId"`
+	GameRoundRef   *string `json:"gameRoundRef"`
 }
 
 // Responces
