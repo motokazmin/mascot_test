@@ -1,3 +1,4 @@
+// Обеспечивает инициализацию и запуск/остановку сервисов приложения.
 package app
 
 import (
@@ -6,7 +7,6 @@ import (
 	"mascot/src/config"
 	"mascot/src/db"
 	"mascot/src/http"
-	"mascot/src/mascot"
 	"mascot/src/mngr"
 	"sync"
 )
@@ -15,7 +15,6 @@ type App struct {
 	Config  *config.Config
 	Db      *db.Service
 	Http    *http.Service
-	Mascot  *mascot.Service
 	Context context.Context
 	wg      *sync.WaitGroup
 	cancel  context.CancelFunc
@@ -35,7 +34,6 @@ func New(config *config.Config) (*App, error) {
 		Config:  config,
 		Db:      db,
 		Http:    http,
-		Mascot:  mascot,
 		Context: ctx,
 		wg:      &wg,
 		cancel:  cancel,

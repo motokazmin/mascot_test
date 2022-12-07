@@ -1,3 +1,4 @@
+// Http сервис приложения.
 package http
 
 import (

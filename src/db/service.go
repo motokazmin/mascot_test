@@ -1,8 +1,10 @@
+// Сервис базы данных postgres
 package db
 
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"log"
 	"mascot/src/config"
 	"sync"
@@ -55,11 +57,77 @@ func (s *Service) Close() {
 	s.client.Close()
 }
 
-/*
-func (s *Service) Select(space string, index string, offset, limit uint64, key []interface{}) ([][]interface{}, error) {
-	resp, err := s.client.Select(space, index, uint32(offset), uint32(limit), tarantool.IterEq, key)
-	if err != nil {
-		return nil, err
+func (s *Service) GetBalance(playerName string) (int, error) {
+	var balance int
+	row := s.client.QueryRow("SELECT balance FROM players WHERE playername=$1", playerName)
+	if err := row.Scan(&balance); err != nil {
+		if err == sql.ErrNoRows {
+			return 0, fmt.Errorf("%s: no such player", playerName)
+		}
+		return 0, fmt.Errorf("%s: %v", playerName, err)
 	}
-	return resp.Tuples(), nil
-}*/
+	return balance, nil
+}
+
+func (s *Service) UpdateBalance(playerName string, newBalance int) {
+	s.client.Exec(
+		"UPDATE players SET balance=$1 WHERE playername=$2", newBalance, playerName)
+}
+
+func (s *Service) InsertTransaction(
+	transactionRef string, playerName string, gameId *string, sessionId *string,
+	gameRoundRef *string, currency string, deposit int, id int, withdraw int,
+	betType *string, winType *string, reason *string) error {
+
+	_, err := s.client.Exec(
+		"INSERT INTO transactions "+
+			"(transactionref, playername, gameid, sessionid, gameroundref, "+
+			"currency, deposit, id, withdraw, betType, winType, reason)"+
+			"VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)",
+		transactionRef, playerName, gameId, sessionId, gameRoundRef, currency,
+		deposit, id, withdraw, betType, winType, reason)
+
+	return err
+}
+
+func (s *Service) RollbackTransaction(playerName string, transactionRef string) error {
+	var result sql.Result
+
+	deposit, withdraw, err := s.getTransactionDetails(playerName, transactionRef)
+	if err != nil {
+		return err
+	}
+
+	balance, err := s.GetBalance(playerName)
+	if err != nil {
+		return err
+	}
+
+	result, err = s.client.Exec(
+		"DELETE FROM transactions WHERE playername=$1 AND transactionref=$2 "+
+			"RETURNING transactionref", playerName, transactionRef)
+
+	if err == nil {
+		count, _ := result.RowsAffected()
+		if count == 0 {
+			return fmt.Errorf(
+				"unknown transaction: playerName %s,  transactionRef %s ", playerName, transactionRef)
+		}
+	}
+
+	s.UpdateBalance(playerName, balance+withdraw-deposit)
+	return nil
+}
+
+func (s *Service) getTransactionDetails(playerName string, transactionRef string) (int, int, error) {
+	var deposit, withdraw int
+	row := s.client.QueryRow("SELECT deposit, withdraw FROM transactions "+
+		"WHERE playername=$1 AND transactionref=$2", playerName, transactionRef)
+	if err := row.Scan(&deposit, &withdraw); err != nil {
+		if err == sql.ErrNoRows {
+			return -1, -1, fmt.Errorf("%s: no such player", playerName)
+		}
+		return -1, -1, fmt.Errorf("%s: %v", playerName, err)
+	}
+	return deposit, withdraw, nil
+}

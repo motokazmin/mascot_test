@@ -1,3 +1,4 @@
+// Создает сервисы, необходимые для работы приложения
 package mngr
 
 import (
@@ -41,7 +42,7 @@ func (m *Manager) GetHttpService() *http.Service {
 
 func (m *Manager) GetMascotService() *mascot.Service {
 	m.once["mascot"].Do(func() {
-		m.mascot = mascot.New(m.ctx, m.wg, m.conf)
+		m.mascot = mascot.New(m.ctx, m.wg, m.conf, m.GetPostgresService())
 	})
 	return m.mascot
 }

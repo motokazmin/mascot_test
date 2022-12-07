@@ -44,8 +44,8 @@ type WithdrawAndDepositParams struct {
 }
 
 type SpinDetails struct {
-	BetType string `json:"betType"`
-	WinType string `json:"winType"`
+	BetType *string `json:"betType"`
+	WinType *string `json:"winType"`
 }
 
 type RollbackTransactionParams struct {
