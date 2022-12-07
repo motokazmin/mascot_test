@@ -1,0 +1,93 @@
+{
+	"info": {
+		"_postman_id": "35534232-cb02-4791-bfae-5d3657200748",
+		"name": "mascot",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "getBalance",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "jsonrpc",
+						"value": "2.0",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"jsonrpc\":\"2.0\",\"method\":\"getBalance\",\"params\":{\"callerId\":1,\"playerName\":\"player1\",\"currency\":\"EUR\",\"gameId\":\"riot\"},\"id\":0}"
+				},
+				"url": {
+					"raw": "127.0.0.1:8080/mascot/seamless",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8080",
+					"path": [
+						"mascot",
+						"seamless"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "rollbackTransaction",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"jsonrpc\":\"2.0\",\"method\":\"rollbackTransaction\",\"params\":{\"callerId\":1,\"playerName\":\"player1\",\"transactionRef\":\"1:UOwGgNHPgq3OkqRE\",\"gameId\":\"riot\",\"sessionId\":\"qx9sgvvpihtrlug\",\"gameRoundRef\":\"1wawxl:39\"},\"id\":0}"
+				},
+				"url": {
+					"raw": "127.0.0.1:8080/mascot/seamless",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8080",
+					"path": [
+						"mascot",
+						"seamless"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "withdrawAndDeposit",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"jsonrpc\":\"2.0\",\"method\":\"withdrawAndDeposit\",\"params\":{\"callerId\":1,\"playerName\":\"player1\",\"withdraw\":400,\"deposit\":200,\"currency\":\"EUR\",\"transactionRef\":\"1:UOwGgNHPgq3OkqRE\",\"gameRoundRef\":\"1wawxl:39\",\"gameId\":\"riot\",\"reason\":\"GAME_PLAY_FINAL\",\"sessionId\":\"qx9sgvvpihtrlug\",\"spinDetails\":{\"betType\":\"spin\",\"winType\":\"standart\"}},\"id\":0}"
+				},
+				"url": {
+					"raw": "127.0.0.1:8080/mascot/seamless",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8080",
+					"path": [
+						"mascot",
+						"seamless"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
