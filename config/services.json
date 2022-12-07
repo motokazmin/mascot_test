@@ -6,6 +6,8 @@
       "user": "postgres",
       "dbname": "mascot_test",
       "password": "postgres",
-      "sslmode": "disable"
+      "sslmode": "disable",
+      "playerstbl": "players",
+      "transactiontbl": "transactions"
    }
 }

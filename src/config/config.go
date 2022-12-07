@@ -16,9 +16,11 @@ type (
 	}
 
 	PostgresService struct {
-		User     string `json:"user"`
-		Dbname   string `json:"dbname"`
-		Password string `json:"password"`
-		SslMode  string `json:"sslmode"`
+		User              string `json:"user"`
+		Dbname            string `json:"dbname"`
+		Password          string `json:"password"`
+		SslMode           string `json:"sslmode"`
+		PlayersTable      string `json:"playerstbl"`
+		TransactionsTable string `json:"transactiontbl"`
 	}
 )

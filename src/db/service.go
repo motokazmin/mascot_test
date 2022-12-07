@@ -59,7 +59,9 @@ func (s *Service) Close() {
 
 func (s *Service) GetBalance(playerName string) (int, error) {
 	var balance int
-	row := s.client.QueryRow("SELECT balance FROM players WHERE playername=$1", playerName)
+	row := s.client.QueryRow(
+		"SELECT balance FROM "+
+			s.config.PlayersTable+"  WHERE playername=$1", playerName)
 	if err := row.Scan(&balance); err != nil {
 		if err == sql.ErrNoRows {
 			return 0, fmt.Errorf("%s: no such player", playerName)
@@ -71,7 +73,8 @@ func (s *Service) GetBalance(playerName string) (int, error) {
 
 func (s *Service) UpdateBalance(playerName string, newBalance int) {
 	s.client.Exec(
-		"UPDATE players SET balance=$1 WHERE playername=$2", newBalance, playerName)
+		"UPDATE "+s.config.PlayersTable+
+			" SET balance=$1 WHERE playername=$2", newBalance, playerName)
 }
 
 func (s *Service) InsertTransaction(
@@ -80,8 +83,8 @@ func (s *Service) InsertTransaction(
 	betType *string, winType *string, reason *string) error {
 
 	_, err := s.client.Exec(
-		"INSERT INTO transactions "+
-			"(transactionref, playername, gameid, sessionid, gameroundref, "+
+		"INSERT INTO "+s.config.TransactionsTable+
+			" (transactionref, playername, gameid, sessionid, gameroundref, "+
 			"currency, deposit, id, withdraw, betType, winType, reason)"+
 			"VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)",
 		transactionRef, playerName, gameId, sessionId, gameRoundRef, currency,
@@ -104,7 +107,8 @@ func (s *Service) RollbackTransaction(playerName string, transactionRef string) 
 	}
 
 	result, err = s.client.Exec(
-		"DELETE FROM transactions WHERE playername=$1 AND transactionref=$2 "+
+		"DELETE FROM "+s.config.TransactionsTable+
+			" WHERE playername=$1 AND transactionref=$2 "+
 			"RETURNING transactionref", playerName, transactionRef)
 
 	if err == nil {
@@ -121,11 +125,11 @@ func (s *Service) RollbackTransaction(playerName string, transactionRef string) 
 
 func (s *Service) getTransactionDetails(playerName string, transactionRef string) (int, int, error) {
 	var deposit, withdraw int
-	row := s.client.QueryRow("SELECT deposit, withdraw FROM transactions "+
-		"WHERE playername=$1 AND transactionref=$2", playerName, transactionRef)
+	row := s.client.QueryRow("SELECT deposit, withdraw FROM "+s.config.TransactionsTable+
+		" WHERE playername=$1 AND transactionref=$2", playerName, transactionRef)
 	if err := row.Scan(&deposit, &withdraw); err != nil {
 		if err == sql.ErrNoRows {
-			return -1, -1, fmt.Errorf("%s: no such player", playerName)
+			return -1, -1, fmt.Errorf("%s: no such transaction", transactionRef)
 		}
 		return -1, -1, fmt.Errorf("%s: %v", playerName, err)
 	}
